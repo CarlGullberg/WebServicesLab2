@@ -1,0 +1,20 @@
+### 1. Hämta token från Authorization Server
+POST http://localhost:9000/oauth2/token
+Authorization: Basic Y2xpZW50LWlkOnNlY3JldA==
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&scope=quotes.read
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+
+
+### 2. Skyddat anrop till Quote Service via Gateway
+GET http://localhost:8081/quotes/random
+Authorization: Bearer {{access_token}}
+
+
+### 3. Skyddat anrop till Joke Service via Gateway (kräver jokes.read)
+GET http://localhost:8081/jokes/random
+Authorization: Bearer {{access_token}}
