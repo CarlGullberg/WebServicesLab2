@@ -1,0 +1,68 @@
+services:
+  auth:
+    build:
+      context: ./authservice
+    image: authservice:0.0.1-SNAPSHOT
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "9000:9000"
+    networks:
+      - microservices-net
+
+  gateway:
+    build:
+      context: ./gateway
+    image: gateway:0.0.1-SNAPSHOT
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    networks:
+      - microservices-net
+    depends_on:
+      - auth
+
+  resourceserver:
+    build:
+      context: ./resourceserver
+    image: resourceserver:0.0.1-SNAPSHOT
+
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+    depends_on:
+      - auth
+
+  jokeservice:
+    build:
+      context: ./jokeservice
+    image: jokeservice:0.0.1-SNAPSHOT
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+    depends_on:
+      - auth
+
+  quoteservice:
+    build:
+      context: ./quoteservice
+    image: quoteservice:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+    depends_on:
+      - auth
+
+networks:
+  microservices-net:
+    driver: bridge
